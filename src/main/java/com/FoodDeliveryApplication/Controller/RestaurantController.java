@@ -3,10 +3,11 @@ package com.FoodDeliveryApplication.Controller;
 import com.FoodDeliveryApplication.Entity.Restaurant;
 import com.FoodDeliveryApplication.Exception.RestaurantNotFoundException;
 import com.FoodDeliveryApplication.Service.RestaurantService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -14,82 +15,84 @@ import java.util.List;
 @CrossOrigin("*")
 public class RestaurantController {
 
+    private final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
+
     @Autowired
     private RestaurantService restaurantService;
 
-    //To save restaurant details
+    // To save restaurant details
     @PostMapping("/restaurant/save")
-    public ResponseEntity<Restaurant> addRestaurants(@RequestBody Restaurant restaurant){
-        //implementation to save restaurant details
+    public ResponseEntity<Restaurant> addRestaurant(@RequestBody Restaurant restaurant) {
+        logger.info("Request to save restaurant: {}", restaurant);
         try {
-            if(restaurant==null){
-                throw new Exception("Restaurant object cannot be null");
-            } else {
-                return ResponseEntity.ok().body(restaurantService.saveRestaurants(restaurant));
-            }
-        }catch (Exception e){
+            return ResponseEntity.ok(restaurantService.saveRestaurants(restaurant));
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid restaurant data : {}", e.getMessage());
             return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            logger.error("Failed to save restaurant: {}", e.getMessage());
+            return ResponseEntity.status(500).body(null);
         }
     }
 
-    //To get restaurant details
+    // To get restaurant details
     @GetMapping("/restaurant/find/{restaurantName}")
-    public ResponseEntity<Restaurant> getRestaurants(@PathVariable("restaurantName") String restaurantName)
-            throws RestaurantNotFoundException {
-        //implementation to get restaurant details
+    public ResponseEntity<Restaurant> getRestaurantByName(@PathVariable("restaurantName") String restaurantName) {
+        logger.info("Request to get restaurant by name: {}", restaurantName);
         try {
-            if(restaurantName==null){
-                throw new Exception("Restaurant id cannot be null");
-            } else {
-                return ResponseEntity.ok().body(restaurantService.getRestaurantsById(restaurantName));
-            }
+            return ResponseEntity.ok(restaurantService.getRestaurantsByName(restaurantName));
+        } catch (RestaurantNotFoundException e) {
+            logger.error("Restaurant not found : {}", e.getMessage());
+            return ResponseEntity.status(404).body(null);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.error("Failed to get restaurant: {}", e.getMessage());
+            return ResponseEntity.status(500).body(null);
         }
     }
 
-    //To getAll restaurant details
+    // To get all restaurant details
     @GetMapping("/restaurant/findAll")
-    public ResponseEntity<List<Restaurant>> getAllRestaurants(){
-        //implementation to get all restaurant details
+    public ResponseEntity<List<Restaurant>> getAllRestaurants() {
+        logger.info("Request to get all restaurants");
         try {
-            return ResponseEntity.ok().body(restaurantService.getAllRestaurants());
+            return ResponseEntity.ok(restaurantService.getAllRestaurants());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-    //To update restaurant details
-    @PutMapping("/restaurant/update/{id}")
-    public ResponseEntity<Restaurant> updateRestaurants(@PathVariable("id") Long id, @RequestBody Restaurant restaurant)
-        throws RestaurantNotFoundException {
-        //implementation to update restaurant details
-        try {
-            if(id==null){
-                throw new Exception("Restaurant id cannot be null");
-            } else if(restaurant==null){
-                throw new Exception("Restaurant object cannot be null");
-            } else {
-                return ResponseEntity.ok().body(restaurantService.updateRestaurant(id, restaurant));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            logger.error("Failed to get all restaurants: {}", e.getMessage());
+            return ResponseEntity.status(500).body(null);
         }
     }
 
-    //To delete restaurant details
-    @DeleteMapping("/restaurant/delete/{id}")
-    public ResponseEntity<Void> deleteRestaurants(@PathVariable("id") Long id)
-        throws RestaurantNotFoundException {
-        //implementation to delete restaurant details
+    // To update restaurant details
+    @PutMapping("/restaurant/update/{id}")
+    public ResponseEntity<Restaurant> updateRestaurant(@PathVariable("id") Long id,@RequestBody Restaurant restaurant) {
+        logger.info("Request to update restaurant with id: {}, data: {}", id, restaurant);
         try {
-            if(id==null){
-                throw new Exception("Restaurant id cannot be null");
-            } else {
-                restaurantService.deleteRestaurant(id);
-                return ResponseEntity.noContent().build();
-            }
+            return ResponseEntity.ok(restaurantService.updateRestaurant(id, restaurant));
+        } catch (RestaurantNotFoundException e) {
+            logger.error("Restaurants not found: {}", e.getMessage());
+            return ResponseEntity.status(404).body(null);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid restaurant data: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            logger.error("Failed to update restaurant: {}", e.getMessage());
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    // To delete restaurant details
+    @DeleteMapping("/restaurant/delete/{id}")
+    public ResponseEntity<Void> deleteRestaurant(@PathVariable("id") Long id) {
+        logger.info("Request to delete restaurant with id: {}", id);
+        try {
+            restaurantService.deleteRestaurant(id);
+            return ResponseEntity.noContent().build();
+        } catch (RestaurantNotFoundException e) {
+            logger.error("Restaurant not found: {}", e.getMessage());
+            return ResponseEntity.status(404).build();
+        } catch (Exception e) {
+            logger.error("Failed to delete restaurant: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
         }
     }
 }

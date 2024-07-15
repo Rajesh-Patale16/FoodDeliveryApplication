@@ -1,4 +1,4 @@
-package com.FoodDeliveryApplication.ServiceImpl;
+package com.FoodDeliveryApplication.Serviceimpl;
 
 
 import com.FoodDeliveryApplication.Entity.User;
@@ -16,6 +16,11 @@ public class UserServiceImpl implements UserService {
     public User saveUser(User user){ return userRepository.save(user);}
 
     public User FindByUsername(String username) {return userRepository.findByUsername(username);}
+
+    @Override
+    public User fetchUserByEmailAndPassword(String email, String password) {
+        return null;
+    }
 
     @Override
     public String LoginUser() {return null;}

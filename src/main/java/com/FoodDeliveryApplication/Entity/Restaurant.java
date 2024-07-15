@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -18,9 +20,10 @@ public class Restaurant {
     private Long id;
     private String restaurantName;
     private String restaurantAddress;
-    private String cuisine;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> cuisines;
+
     private Double rating;
 
-//    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Menu> menus;
 }
