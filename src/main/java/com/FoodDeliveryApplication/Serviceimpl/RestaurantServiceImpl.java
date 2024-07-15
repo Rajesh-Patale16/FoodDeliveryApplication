@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -32,7 +31,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         try {
             validateRestaurantData(restaurant);
             return restaurantRepository.save(restaurant);
-        } catch(ValidationException e){
+        } catch(IllegalArgumentException e){
             throw e;
         } catch(Exception e){
             throw new RuntimeException("Failed to save restaurants", e);
@@ -91,19 +90,19 @@ public class RestaurantServiceImpl implements RestaurantService {
     // Validation checks using if-else block conditions
     private void validateRestaurantData(Restaurant restaurant) {
         if (restaurant.getRestaurantName() == null || !SAFE_TEXT_PATTERN.matcher(restaurant.getRestaurantName()).matches()) {
-            throw new ValidationException("Invalid name format. Only alphanumeric characters, underscores, dots, @, -, spaces, and parentheses are allowed.");
+            throw new IllegalArgumentException("Invalid name format. Only alphanumeric characters, underscores, dots, @, -, spaces, and parentheses are allowed.");
         }
 
         if (restaurant.getRestaurantAddress() == null || !ADDRESS_PATTERN.matcher(restaurant.getRestaurantAddress()).matches()) {
-            throw new ValidationException("Invalid address format. Only alphanumeric characters, spaces, commas, periods, apostrophes, and hyphens are allowed.");
+            throw new IllegalArgumentException("Invalid address format. Only alphanumeric characters, spaces, commas, periods, apostrophes, and hyphens are allowed.");
         }
 
         if (restaurant.getCuisine() == null || !CUISINE_PATTERN.matcher(restaurant.getCuisine()).matches()) {
-            throw new ValidationException("Invalid cuisine format. Only alphabetic characters and spaces are allowed.");
+            throw new IllegalArgumentException("Invalid cuisine format. Only alphabetic characters and spaces are allowed.");
         }
 
         if (restaurant.getRating() == null || !RATING_PATTERN.matcher(restaurant.getRating().toString()).matches()) {
-            throw new ValidationException("Invalid rating format. Only numeric characters and a decimal point are allowed.");
+            throw new IllegalArgumentException("Invalid rating format. Only numeric characters and a decimal point are allowed.");
         }
     }
 
