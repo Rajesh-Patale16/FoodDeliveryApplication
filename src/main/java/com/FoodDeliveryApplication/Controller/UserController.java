@@ -45,4 +45,15 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.saveUser(user));
     }
+
+    @PostMapping("/loginuser")
+    public String loginUser(@RequestBody User user) throws Exception{
+        User userobj = userService.fetchUserByEmailAndPassword(user.getEmail(), user.getPassword());
+
+        if (user == null) {
+            throw new Exception("User does not exists!!! Please enter valid credentials...");
+        }
+
+        return "Login successful";
+    }
 }

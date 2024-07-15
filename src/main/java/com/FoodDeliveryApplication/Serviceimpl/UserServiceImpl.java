@@ -20,5 +20,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public String LoginUser() {return null;}
 
+    public User fetchUserByEmailAndPassword(String email, String password) {
+        return userRepository.findByEmailAndPassword(email, password);
+    }
 }
 

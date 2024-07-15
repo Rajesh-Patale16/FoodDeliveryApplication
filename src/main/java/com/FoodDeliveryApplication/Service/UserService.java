@@ -12,5 +12,6 @@ public interface UserService {
 
            public User FindByUsername(String username);
 
+    public User fetchUserByEmailAndPassword(String email, String password) ;
 
 }
