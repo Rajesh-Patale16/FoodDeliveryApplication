@@ -5,9 +5,7 @@ import com.FoodDeliveryApplication.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -15,6 +13,8 @@ import java.util.regex.Pattern;
 
 
 @RestController
+@RequestMapping("/api/users")
+@CrossOrigin("*")
 public class UserController {
 
 
@@ -30,8 +30,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/registerUser")
-
+    @PostMapping("/user/registerUser")
     public ResponseEntity<?> registerUser(@RequestBody User user) throws Exception{
 
         if (!isValidEmail(user.getEmail())) {
@@ -46,9 +45,9 @@ public class UserController {
         return ResponseEntity.ok(userService.saveUser(user));
     }
 
-    @PostMapping("/loginuser")
+    @PostMapping("/user/loginUser")
     public String loginUser(@RequestBody User user) throws Exception{
-        User userobj = userService.fetchUserByEmailAndPassword(user.getEmail(), user.getPassword());
+        User userObj = userService.fetchUserByEmailAndPassword(user.getEmail(), user.getPassword());
 
         if (user == null) {
             throw new Exception("User does not exists!!! Please enter valid credentials...");
