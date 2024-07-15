@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User fetchUserByEmailAndPassword(String email, String password) {
-        return null;
+        return userRepository.findByEmailAndPassword(email,password);
     }
 
     @Override
