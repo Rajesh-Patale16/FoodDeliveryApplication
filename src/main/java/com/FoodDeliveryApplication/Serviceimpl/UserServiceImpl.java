@@ -18,10 +18,12 @@ public class UserServiceImpl implements UserService {
     public User FindByUsername(String username) {return userRepository.findByUsername(username);}
 
     @Override
+    public User fetchUserByEmailAndPassword(String email, String password) {
+        return null;
+    }
+
+    @Override
     public String LoginUser() {return null;}
 
-    public User fetchUserByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
-    }
 }
 
